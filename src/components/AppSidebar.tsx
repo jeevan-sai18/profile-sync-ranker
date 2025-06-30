@@ -43,21 +43,22 @@ const userItems = [
 ];
 
 export function AppSidebar() {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
   const { user, logout } = useAuth();
   const location = useLocation();
   const currentPath = location.pathname;
 
   const items = user?.role === 'admin' ? adminItems : userItems;
+  const isCollapsed = state === 'collapsed';
 
   const isActive = (path: string) => currentPath === path;
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive ? 'bg-primary text-primary-foreground font-medium' : 'hover:bg-accent hover:text-accent-foreground';
 
   return (
-    <Sidebar className={collapsed ? 'w-14' : 'w-64'} collapsible>
+    <Sidebar className={isCollapsed ? 'w-14' : 'w-64'} collapsible="icon">
       <SidebarHeader className="p-4">
-        {!collapsed && (
+        {!isCollapsed && (
           <div className="flex items-center gap-2">
             <Building className="h-6 w-6 text-primary" />
             <span className="font-bold text-lg">TalentMatch</span>
@@ -75,7 +76,7 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavCls}>
                       <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
+                      {!isCollapsed && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -86,7 +87,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-4">
-        {!collapsed && (
+        {!isCollapsed && (
           <div className="space-y-2">
             <div className="text-sm text-muted-foreground">
               {user?.name} ({user?.role})
@@ -102,7 +103,7 @@ export function AppSidebar() {
             </Button>
           </div>
         )}
-        {collapsed && (
+        {isCollapsed && (
           <Button
             variant="outline"
             size="sm"
